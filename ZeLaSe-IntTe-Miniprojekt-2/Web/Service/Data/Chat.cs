@@ -8,11 +8,11 @@ namespace JSTestat.Service.Data
     [Serializable]
     public class Chat
     {
-        public string Name { get; private set; }
-        public List<Player> Players { get; private set; }
-        public List<ChatLine> ChatLines { get; private set; }
-        public string Id { get; private set; }
-        public DateTime LastUse { get; private set; }
+        public string Name { get;  set; }
+        public List<Player> Players { get;  set; }
+        public List<ChatLine> ChatLines { get;  set; }
+        public string Id { get;  set; }
+        public DateTime LastUse { get;  set; }
         private int _chatLines = 0;
       
         public Chat()
