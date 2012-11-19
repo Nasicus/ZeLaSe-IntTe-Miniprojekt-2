@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="js\chat-functions.js" />
+    <Content Include="js\channel-functions.js" />
     <Content Include="js\lobby-functions.js" />
     <Content Include="js\global-functions.js" />
     <Content Include="Global.asax" />
