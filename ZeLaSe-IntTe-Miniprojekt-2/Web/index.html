@@ -22,15 +22,21 @@
 	</div><!-- /header -->
 
 	<div data-role="content" >	
-		<h2>Lorem ipsum</h2>
+		<h2>Please enter your name:</h2>
 		
-		<p>Lorem ipsum</p>	
+		<input type="text" value="Schnäbi" class="input" data-form="ui-body-a" />	
 		
 
 	    <h3>Channel:</h3>
         <p><a href="#channel" data-role="button">Neuer Channel erstellen</a></p>
-        <div id="availableChannels">
-		</div>
+	    <div id="availableChannels">
+	    </div>
+        <ul data-role="listview" data-divider-theme="a" data-inset="true">
+                    <li data-role="list-divider" role="heading">
+                        Channel Overview
+                    </li>
+                    
+                </ul>
 	</div><!-- /content -->
 	
 	<div data-role="footer" data-theme="d">

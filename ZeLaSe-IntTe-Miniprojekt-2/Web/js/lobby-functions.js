@@ -14,7 +14,12 @@ $(document).delegate("#lobby", "pagecreate", function () {
                     var chatName = $(this).find('Name').text();
                     var chatId = $(this).find('Id').text();
                     var numberOfPlayers = $(this).find('Players').find('Player').size();
-                    channels.append('<p><a href="#chat" id="' + chatId + '" data-role="button">' + chatName + ' (' + numberOfPlayers + ')</a></p>');
+                    
+                    //var lobbyList = $
+                    var a = $('ul:jqmData(role="listview")');
+                    
+                    a.append('<li data-theme="c" id="' + chatId + '"><a href="#chat" data-transition="slide">' + chatName + '</a></li>').listview("refresh");
+                   // channels.append('<p><a href="#chat" id="' + chatId + '" data-role="button">' + chatName + ' (' + numberOfPlayers + ')</a></p>');
                 });
                 channels.trigger("create");
             }
