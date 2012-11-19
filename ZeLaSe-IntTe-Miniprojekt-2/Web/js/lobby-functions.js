@@ -2,7 +2,7 @@ $(document).delegate("#lobby", "pagecreate", function () {
     loadChannels();
     
     function loadChannels() {
-        setTimeout(loadChannels, 5000);
+        //setTimeout(loadChannels, 5000);
         $.ajax({
             type: "POST",
             url: serverUrl + "GetChats ",
