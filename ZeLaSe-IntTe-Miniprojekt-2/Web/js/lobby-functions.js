@@ -1,48 +1,100 @@
 $(document).delegate("#lobby", "pagecreate", function () {
     var errorField = $("#errorLobby");
+    var playerToken = "";
+    
     loadChannels();
+
+    $("#createChannel").bind("click", function () {
+        var username = checkUserName($("#username"));
+        if (username == '')
+            return false;
+        setPlayerToken();
+        if (playerToken == '')
+            showError("No player token - lol shouldnt happen, maybe server down");
+        var newChannel = createChannel($("#newChannel"));
+        if (newChannel == '')
+            return false;
+        hideError();
+        $.mobile.changePage("#chat?username=" + username + "&playerToken=" + playerToken + "&channel=" + newChannel, { transition: "slide" });
+    });
+    
+    function setPlayerToken() {
+        if (playerToken != '') return;
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "Connect",
+            dataType: "xml",
+            async: false,
+            success: function (xml) {
+                playerToken = $(xml).find("string").text();
+            }
+        });
+    }
+
+    function createChannel(newChannel) {
+        if (newChannel.val().trim() == '') {
+            showError("You MUST enter a channel, faggot!");
+            return '';
+        }
+        var newChannelName = '';
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "CreateChannel",
+            dataType: "xml",
+            async: false,
+            data: { playerToken: playerToken, channelName: newChannel.val() },
+            success: function (xml) {
+                newChannelName = $(xml).find("string").text();
+            }
+        });
+        if (newChannelName != '')
+            return newChannelName;
+        showError("Some Error happend on creating channel, try again");
+        return '';
+    }
     
     function loadChannels() {
-        //setTimeout(loadChannels, 5000);
+        setTimeout(loadChannels, 5000);
         $.ajax({
             type: "POST",
             url: serverUrl + "GetChats ",
             dataType: "xml",
             success: function (xml) {
-                var channels = $("#availableChannels");
-                channels.html("");
+                var channels = $('ul:jqmData(role="listview")');
+                channels.find("li:gt(0)").remove();
                 $(xml).find("Chat").each(function () {
                     var chatName = $(this).find('Name').text();
                     var chatId = $(this).find('Id').text();
                     var numberOfPlayers = $(this).find('Players').find('Player').size();
-                    var a = $('ul:jqmData(role="listview")');
-                    a.append('<li data-theme="c" id="' + chatId + '"><a href="#chat" data-transition="slide">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
+                    channels.append('<li data-theme="c" id="' + chatId + '"><a href="#chat" data-transition="slide">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
                 });
                 channels.trigger("create");
             }
         });
     }
 
-    function checkUserName() {
-        var username = $("#username");
-        if (username.val().trim() == '') {
+    function checkUserName(newUserName) {
+        if (newUserName.val().trim() == '') {
             showError("You MUST enter a username, faggot!");
-            return false;
+            return '';
         }
         var isUnique = false;
         $.ajax({
             type: "POST",
             url: serverUrl + "IsNameUnique",
-            data: { name: username.val() },
+            data: { name: newUserName.val() },
             dataType: "xml",
             async: false,
             success: function (xml) {
-                isUnique = "true" == $(xml).find("boolean").text();
+                isUnique = ("true" == $(xml).find("boolean").text());
             }
         });
-        return isUnique;
+        if (isUnique)
+            return newUserName.val();
+        showError("Your username is already taken idiot");
+        return '';
     }
-    
+
     function showError(text) {
         errorField.text(text);
         errorField.css("display", "block");
@@ -51,13 +103,4 @@ $(document).delegate("#lobby", "pagecreate", function () {
     function hideError() {
         errorField.css("display", "none");
     }
-    
-    $("#createChannel").bind("click", function () {
-        var username = $("#username");
-        if (!checkUserName())
-            return false;
-        $.mobile.changePage("#chat?username=" + username.val(), { transition: "slide" });
-    });
-    
-
 });
