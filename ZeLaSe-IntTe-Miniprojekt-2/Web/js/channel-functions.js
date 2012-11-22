@@ -1,9 +1,7 @@
 $(document).delegate("#channel", "pagecreate", function () {
-    loadChannels();
     var token;
     var channelName;
-    function loadChannels() {
-        //setTimeout(loadChannels, 5000);
+    function createChannel() {
         $.ajax({
             type: "POST",
             url: serverUrl + "playerToken="+token+"&channelName="+channelName,

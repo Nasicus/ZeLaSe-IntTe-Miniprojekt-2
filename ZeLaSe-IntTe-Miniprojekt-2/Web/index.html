@@ -5,69 +5,52 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1"> 
 	<title>ZeLaSe-InTe-Miniprojekt-2 - Chat</title> 
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.css" />
+    <link rel="stylesheet" href="./style.css" />
     <script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js"></script>
+    <script src="./js/jqm.page.params.js"></script>
 	<script src="./js/global-functions.js"></script>
 </head> 
 
 	
 <body> 
 
-<!-- Start of first page: #one -->
 <div data-role="page" id="lobby">
 
 	<div data-role="header">
 		<h1>Chat Lobby</h1>
 	</div><!-- /header -->
 
-	<div data-role="content" >	
-		<h2>Please enter your name:</h2>
+    <div data-role="content" >
+        <div id="errorLobby" data-role="none" data-theme="d" class="error"></div>	
+        <h2>Enter your username...</h2>
 		
-		<input type="text" value="Schnäbi" class="input" data-form="ui-body-a" />	
-		
+        <div data-role="fieldcontain" class="ui-hide-label">
+            <label for="username">...your ultracool username goes here...</label>
+            <input type="text" name="username" id="username" value="" placeholder="...your ultracool username goes here..."/>
+        </div>
 
-	    <h3>Channel:</h3>
-        <p><a href="#channel" data-role="button">Neuer Channel erstellen</a></p>
-	    <div id="availableChannels">
-	    </div>
+        <h3>...and ... </h3>
+        <p>
+            <input type="text" placeholder="...enter a name for a new channel here..." class="input" data-form="ui-body-a" />
+            <a href="#" data-direction="forward" data-role="button" id="createChannel" data-icon="plus" data-iconpos="right" data-transition="slide">create & join channel</a>
+        </p>
+        <h3>...or join an existing channel from the list below...</h3>
+        <div id="availableChannels">
+        </div>
         <ul data-role="listview" data-divider-theme="a" data-inset="true">
-                    <li data-role="list-divider" role="heading">
-                        Channel Overview
-                    </li>
+            <li data-role="list-divider" role="heading">
+                Channel Overview
+            </li>
                     
-                </ul>
-	</div><!-- /content -->
-	
-	<div data-role="footer" data-theme="d">
-		<h4>Page Footer</h4>
-	</div><!-- /footer -->
+        </ul>
+    </div><!-- /content -->
+    <div data-role="footer" data-theme="d" ></div>
     <script src="./js/lobby-functions.js"></script>
-</div><!-- /page one -->
+</div>
 
-    <!-- Start of second page: #two -->
-<div data-role="page" id="channel">
 
-	<div data-role="header">
-		<h1>Create New Channel</h1>
-	</div><!-- /header -->
-
-	<div data-role="content">	
-		<h2>Please enter channel name:</h2>
-		
-	    <input type="text" value="#my ultra cool channel name" class="input" data-form="ui-body-a" />
-        <p><a href="#lobby" data-direction="forward" data-role="button" data-icon="arrow-r" data-iconpos="right" data-transition="slide">create channel</a></p>	
-		<p><a href="#lobby" data-direction="reverse" data-role="button" data-icon="arrow-l" data-iconpos="right" data-transition="slideleft">Zurück zur Lobby</a></p>	
-		
-	</div><!-- /content -->
-	
-	<div data-role="footer" data-theme="d">
-		<h4>Page Footer</h4>
-	</div><!-- /footer -->
-    <script src="./js/channel-functions.js"></script>
-</div><!-- /page two -->
-
-    <!-- Start of second page: #two -->
 <div data-role="page" id="chat">
 
 	<div data-role="header">
@@ -77,14 +60,12 @@
 	<div data-role="content">	
 		<h2>Lorem ipsum </h2>
 		<p>Lorem ipsum </p>	
-		<p><a href="#lobby" data-direction="reverse" data-role="button">Zurück zur Lobby</a></p>	
+		<p><a href="#lobby" data-direction="reverse" data-role="button" data-icon="arrow-l" data-iconpos="left" data-transition="slide">Zurück zur Lobby</a></p>	
 		
 	</div><!-- /content -->
-	
-	<div data-role="footer" data-theme="d">
-		<h4>Page Footer</h4>
-	</div><!-- /footer -->
+    <div data-role="footer" data-theme="d" ></div>
     <script src="./js/chat-functions.js"></script>
 </div><!-- /page two -->
+
 </body>
 </html>
