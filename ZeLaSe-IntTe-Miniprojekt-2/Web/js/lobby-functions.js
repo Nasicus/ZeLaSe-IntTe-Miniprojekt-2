@@ -5,7 +5,9 @@ $(document).delegate("#lobby", "pagecreate", function () {
     
     $(document).delegate("#lobby", "pagebeforehide", pageBeforeHideFunction);
     $(document).delegate("#lobby", "pagebeforeshow", pageBeforeShowFunction);
-    
+    $("#username").bind('keyup', function (e) {
+        checkUserName($("#username"));
+    });
     
 
     $("#createChannel").bind("click", function () {
@@ -95,8 +97,10 @@ $(document).delegate("#lobby", "pagecreate", function () {
                 isUnique = ("true" == $(xml).find("boolean").text());
             }
         });
-        if (isUnique)
+        if (isUnique) {
+            hideError();
             return newUserName.val();
+        }
         showError("Your username is already taken idiot");
         return '';
     }
