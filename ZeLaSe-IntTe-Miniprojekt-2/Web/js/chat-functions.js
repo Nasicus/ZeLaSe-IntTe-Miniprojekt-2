@@ -12,6 +12,7 @@ $(document).delegate("#chat", "pageinit", function () {
     
     $("#sendchatmessagebutton").bind("click", sendChatMessage);
     $("#leaveChatButton").bind("click", leaveChat);
+    $('#chatmessages').autosize();
 
 
     function leaveChat() {
@@ -68,7 +69,7 @@ $(document).delegate("#chat", "pageinit", function () {
                         newChatHistory += $(this).find("Player").find("PlayerName").text() + " said : " + $(this).find("Text").text()+"\n";
                     });
                     $("#chatmessages").val(newChatHistory);
-
+                    $("#chatmessages").trigger("autosize");
                 }
             });
         }
