@@ -6,13 +6,19 @@ $(document).delegate("#chat", "pageinit", function () {
 
     $(document).delegate("#chat", "pagebeforehide", pageBeforeHideFunction);
     $(document).delegate("#chat", "pagebeforeshow", pageBeforeShowFunction);
-
+    $("#chatMessageInput").bind('keypress', function (e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13) { //Enter keycode
+            sendChatMessage();
+        }
+    });
 
     
     
     $("#sendchatmessagebutton").bind("click", sendChatMessage);
     $("#leaveChatButton").bind("click", leaveChat);
     $('#chatmessages').autosize();
+    
 
 
     function leaveChat() {
@@ -111,7 +117,8 @@ $(document).delegate("#chat", "pageinit", function () {
         } if ($.mobile.pageData && $.mobile.pageData.channel) {
             channel = $.mobile.pageData.channel;
         }
-
+        
+        
         joinChat();
         setUserlabel();
         
