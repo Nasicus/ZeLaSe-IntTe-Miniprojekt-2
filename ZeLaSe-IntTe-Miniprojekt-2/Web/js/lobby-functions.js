@@ -1,8 +1,11 @@
 $(document).delegate("#lobby", "pagecreate", function () {
     var errorField = $("#errorLobby");
     var playerToken = "";
+    var shouldPollChatLobby = true;
+    $(document).delegate("#lobby", "pagebeforehide", pageBeforeHideFunction);
+    $(document).delegate("#lobby", "pagebeforeshow", pageBeforeShowFunction);
     
-    loadChannels();
+    
 
     $("#createChannel").bind("click", function () {
         var username = checkUserName($("#username"));
@@ -54,7 +57,9 @@ $(document).delegate("#lobby", "pagecreate", function () {
     }
     
     function loadChannels() {
-        setTimeout(loadChannels, 5000);
+        if (shouldPollChatLobby) {
+            setTimeout(loadChannels, 5000);
+        }
         $.ajax({
             type: "POST",
             url: serverUrl + "GetChats ",
@@ -103,4 +108,16 @@ $(document).delegate("#lobby", "pagecreate", function () {
     function hideError() {
         errorField.css("display", "none");
     }
+    
+    function pageBeforeHideFunction() {
+        shouldPollChatLobby = false;
+    }
+    
+    function pageBeforeShowFunction() {
+        shouldPollChatLobby = true;
+        loadChannels();
+    }
 });
+
+
+
