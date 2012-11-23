@@ -1,7 +1,8 @@
 $(document).delegate("#lobby", "pagecreate", function () {
     var errorField = $("#errorLobby");
     var playerToken = "";
-    var shouldPollChatLobby = true;
+    var shouldPollForNewChatRooms = true;
+    
     $(document).delegate("#lobby", "pagebeforehide", pageBeforeHideFunction);
     $(document).delegate("#lobby", "pagebeforeshow", pageBeforeShowFunction);
     
@@ -57,25 +58,25 @@ $(document).delegate("#lobby", "pagecreate", function () {
     }
     
     function loadChannels() {
-        if (shouldPollChatLobby) {
+        if (shouldPollForNewChatRooms) {
             setTimeout(loadChannels, 5000);
+            $.ajax({
+                type: "POST",
+                url: serverUrl + "GetChats ",
+                dataType: "xml",
+                success: function (xml) {
+                    var channels = $('ul:jqmData(role="listview")');
+                    channels.find("li:gt(0)").remove();
+                    $(xml).find("Chat").each(function () {
+                        var chatName = $(this).find('Name').text();
+                        var chatId = $(this).find('Id').text();
+                        var numberOfPlayers = $(this).find('Players').find('Player').size();
+                        channels.append('<li data-theme="c" id="' + chatId + '"><a href="#chat" data-transition="slide">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
+                    });
+                    channels.trigger("create");
+                }
+            });
         }
-        $.ajax({
-            type: "POST",
-            url: serverUrl + "GetChats ",
-            dataType: "xml",
-            success: function (xml) {
-                var channels = $('ul:jqmData(role="listview")');
-                channels.find("li:gt(0)").remove();
-                $(xml).find("Chat").each(function () {
-                    var chatName = $(this).find('Name').text();
-                    var chatId = $(this).find('Id').text();
-                    var numberOfPlayers = $(this).find('Players').find('Player').size();
-                    channels.append('<li data-theme="c" id="' + chatId + '"><a href="#chat" data-transition="slide">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
-                });
-                channels.trigger("create");
-            }
-        });
     }
 
     function checkUserName(newUserName) {
@@ -110,11 +111,11 @@ $(document).delegate("#lobby", "pagecreate", function () {
     }
     
     function pageBeforeHideFunction() {
-        shouldPollChatLobby = false;
+        shouldPollForNewChatRooms = false;
     }
     
     function pageBeforeShowFunction() {
-        shouldPollChatLobby = true;
+        shouldPollForNewChatRooms = true;
         loadChannels();
     }
 });

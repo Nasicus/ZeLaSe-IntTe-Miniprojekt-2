@@ -1,26 +1,15 @@
 $(document).delegate("#chat", "pageinit", function () {
-
-
     var playerToken;
     var username;
     var channel;
-    if ($.mobile.pageData && $.mobile.pageData.username) {
-        username = $.mobile.pageData.username;
-       
-    } else {
-        //window.location.href = "http://google.com"
-    }
-    if ($.mobile.pageData && $.mobile.pageData.playerToken) {
-        playerToken = $.mobile.pageData.playerToken;
+    var shouldPollForNewMessages = true;
 
-    } if ($.mobile.pageData && $.mobile.pageData.channel) {
-        channel = $.mobile.pageData.channel;
-    }
+    $(document).delegate("#chat", "pagebeforehide", pageBeforeHideFunction);
+    $(document).delegate("#chat", "pagebeforeshow", pageBeforeShowFunction);
 
-    joinChat();
 
-    setUserlabel();
-    setupChatroomdata();
+    
+    
     $("#sendchatmessagebutton").bind("click", sendChatMessage);
     $("#leaveChatButton").bind("click", leaveChat);
 
@@ -50,7 +39,9 @@ $(document).delegate("#chat", "pageinit", function () {
                },
                dataType: "xml",
                async: false,
-               success: function (xml) {}
+               success: function(xml) {
+                   $("#chatMessageInput").val("");
+               }
            });
        }
     }
@@ -60,24 +51,27 @@ $(document).delegate("#chat", "pageinit", function () {
     }
 
     
-    function setupChatroomdata() {
-        //setTimeout(setupChatroomdata(), 5000);
-        
-        $.ajax({
-            type: "POST",
-            url: serverUrl + "GetChat",
-            data: { chatId: channel },
-            dataType: "xml",
-            async: false,
-            success: function(xml) {
-                $("#chatnamelabel").text($(xml).find("Name").text());
-                $(xml).find("ChatLine").each(function() {
-                    alert($(this).find("Player").find("PlayerName") + " said : " + $(this).find("Text").text());
-                });
+    function startChatroomPolling() {
+        if (shouldPollForNewMessages) {
+            setTimeout(startChatroomPolling, 100);
+            $.ajax({
+                type: "POST",
+                url: serverUrl + "GetChat",
+                data: { chatId: channel },
+                dataType: "xml",
+                async: false,
+                success: function (xml) {
+                    $("#chatnamelabel").text($(xml).find("Name").text());
+                    
+                    var newChatHistory ="";
+                    $($(xml).find("ChatLine").get().reverse()).each(function () {
+                        newChatHistory += $(this).find("Player").find("PlayerName").text() + " said : " + $(this).find("Text").text()+"\n";
+                    });
+                    $("#chatmessages").val(newChatHistory);
 
-            }
-        });
-        
+                }
+            });
+        }
     }
 
     function joinChat() {
@@ -93,5 +87,34 @@ $(document).delegate("#chat", "pageinit", function () {
             async: false,
             success: function (xml) {}
         });
+    }
+
+
+    function pageBeforeHideFunction() {
+        shouldPollForNewMessages = false;
+        playerToken = null;
+        username = null;
+        channel = null;
+    }
+
+    function pageBeforeShowFunction() {
+        if ($.mobile.pageData && $.mobile.pageData.username) {
+            username = $.mobile.pageData.username;
+
+        } else {
+            //window.location.href = "http://google.com"
+        }
+        if ($.mobile.pageData && $.mobile.pageData.playerToken) {
+            playerToken = $.mobile.pageData.playerToken;
+
+        } if ($.mobile.pageData && $.mobile.pageData.channel) {
+            channel = $.mobile.pageData.channel;
+        }
+
+        joinChat();
+        setUserlabel();
+        
+        shouldPollForNewMessages = true;
+        startChatroomPolling();
     }
 });
