@@ -19,36 +19,71 @@ $(document).delegate("#chat", "pageinit", function () {
 
     joinChat();
 
-    setUserlabel(username);
-    setChatroomlabel(channel);
+    setUserlabel();
+    setupChatroomdata();
+    $("#sendchatmessagebutton").bind("click", sendChatMessage);
+    $("#leaveChatButton").bind("click", leaveChat);
 
-    
-    
 
+    function leaveChat() {
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "LeaveChat",
+            data: {playerToken: playerToken},
+            dataType: "xml",
+            async: false,
+            success: function (xml) { }
+        });
+    }
+
+    function sendChatMessage() {
+        var message = $("#chatMessageInput").val();
+        if (message == "") {
+           alert('stop homo please');
+       } else {
+           $.ajax({
+               type: "POST",
+               url: serverUrl + "WriteLine",
+               data: {
+                   playerToken: playerToken,
+                   text:message
+               },
+               dataType: "xml",
+               async: false,
+               success: function (xml) {}
+           });
+       }
+    }
 
     function setUserlabel() {
         $("#userchatnamelabel").text("Enter your message(" + username + " says)");
     }
 
-    function setChatroomlabel(channel) {
-        if ($.mobile.pageData && $.mobile.pageData.channel) {
-            $.ajax({
-                type: "POST",
-                url: serverUrl + "GetChat",
-                data: { chatId: channel },
-                dataType: "xml",
-                async: false,
-                success: function (xml) {
-                    $("#chatnamelabel").text($(xml).find("Name").text());
-                }
-            });
-        }
+    
+    function setupChatroomdata() {
+        //setTimeout(setupChatroomdata(), 5000);
+        
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "GetChat",
+            data: { chatId: channel },
+            dataType: "xml",
+            async: false,
+            success: function(xml) {
+                $("#chatnamelabel").text($(xml).find("Name").text());
+                $(xml).find("ChatLine").each(function() {
+                    alert($(this).find("Player").find("PlayerName") + " said : " + $(this).find("Text").text());
+                });
+
+            }
+        });
+        
     }
 
     function joinChat() {
         $.ajax({
             type: "POST",
-            url: serverUrl + "joinChat",
+            url: serverUrl + "JoinChat",
             data: {
                 playerToken: playerToken,
                 chatId: channel,
