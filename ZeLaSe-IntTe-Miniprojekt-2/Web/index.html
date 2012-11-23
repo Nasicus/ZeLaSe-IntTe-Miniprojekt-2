@@ -56,10 +56,25 @@
 	</div><!-- /header -->
 
 	<div data-role="content">	
-		<h2>Lorem ipsum </h2>
-		<p>Lorem ipsum </p>	
-		<p><a href="#lobby" data-direction="reverse" data-role="button" data-icon="arrow-l" data-iconpos="left" data-transition="slide">Zurück zur Lobby</a></p>	
-		
+		<h2> <div id="chatnamelabel" data-role="none" data-theme="d" >Chatname here</div> </h2>
+	    <div id="userchatnamelabel" data-role="none" data-theme="d" >username goes here</div>	
+	    <p>
+	        <input type="text" class="input"  id="chatinput" data-form="ui-body-a" />
+	        <a href="#" data-direction="forward" data-role="button" id="sendchatmessagebutton" data-transition="slide">Send Message</a>
+	    </p>
+	    <div data-role="fieldcontain">
+                    <fieldset data-role="controlgroup">
+                        <label for="chatmessages">
+                            Messages:
+                        </label>
+                        <textarea name="" id="chatmessages" placeholder="">
+                        </textarea>
+                    </fieldset>
+                </div>
+        
+
+	    <p><a href="#lobby" data-direction="reverse" data-role="button" data-icon="arrow-l" data-iconpos="left" data-transition="slide">Zurück zur Lobby</a></p>	
+            
 	</div><!-- /content -->
     <div data-role="footer" data-theme="d" ></div>
     <script src="./js/chat-functions.js"></script>
