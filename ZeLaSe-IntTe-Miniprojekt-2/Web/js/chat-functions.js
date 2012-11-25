@@ -12,14 +12,10 @@ $(document).delegate("#chat", "pageinit", function () {
             sendChatMessage();
         }
     });
-
-    
     
     $("#sendchatmessagebutton").bind("click", sendChatMessage);
     $("#leaveChatButton").bind("click", leaveChat);
     $('#chatmessages').autosize();
-    
-
 
     function leaveChat() {
         $.ajax({
@@ -34,23 +30,21 @@ $(document).delegate("#chat", "pageinit", function () {
 
     function sendChatMessage() {
         var message = $("#chatMessageInput").val();
-        if (message == "") {
-           alert('stop homo please');
-       } else {
-           $.ajax({
-               type: "POST",
-               url: serverUrl + "WriteLine",
-               data: {
-                   playerToken: playerToken,
-                   text:message
-               },
-               dataType: "xml",
-               async: false,
-               success: function(xml) {
-                   $("#chatMessageInput").val("");
-               }
-           });
-       }
+        if (message == "") 
+            return;
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "WriteLine",
+            data: {
+                playerToken: playerToken,
+                text:message
+            },
+            dataType: "xml",
+            async: false,
+            success: function(xml) {
+                $("#chatMessageInput").val("");
+            }
+        });
     }
 
     function setUserlabel() {
@@ -60,7 +54,7 @@ $(document).delegate("#chat", "pageinit", function () {
     
     function startChatroomPolling() {
         if (shouldPollForNewMessages) {
-            setTimeout(startChatroomPolling, 100);
+            setTimeout(startChatroomPolling, 10000);
             $.ajax({
                 type: "POST",
                 url: serverUrl + "GetChat",

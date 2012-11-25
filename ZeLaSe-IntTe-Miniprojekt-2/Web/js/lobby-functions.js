@@ -6,12 +6,12 @@ $(document).delegate("#lobby", "pagecreate", function () {
     $(document).delegate("#lobby", "pagebeforehide", pageBeforeHideFunction);
     $(document).delegate("#lobby", "pagebeforeshow", pageBeforeShowFunction);
     $("#username").bind('keyup', function (e) {
-        checkUserName($("#username"));
+        checkUserName($("#username"),false);
     });
     
 
     $("#createChannel").bind("click", function () {
-        var username = checkUserName($("#username"));
+        var username = checkUserName($("#username"),true);
         if (username == '')
             return false;
         setPlayerToken();
@@ -23,7 +23,20 @@ $(document).delegate("#lobby", "pagecreate", function () {
         hideError();
         $.mobile.changePage("#chat?username=" + username + "&playerToken=" + playerToken + "&channel=" + newChannel, { transition: "slide" });
     });
-    
+
+    function reBind() {
+        $('#availableChannels li').bind("click", function() {
+            var username = checkUserName($("#username"), true);
+            if (username == '')
+                return false;
+            setPlayerToken();
+            if (playerToken == '')
+                showError("No player token - lol shouldnt happen, maybe server down");
+            hideError();
+            $.mobile.changePage("#chat?username=" + username + "&playerToken=" + playerToken + "&channel=" + $(this).attr("id"), { transition: "slide" });
+        });
+    }
+
     function setPlayerToken() {
         if (playerToken != '') return;
         $.ajax({
@@ -71,18 +84,19 @@ $(document).delegate("#lobby", "pagecreate", function () {
                     channels.find("li:gt(0)").remove();
                     $(xml).find("Chat").each(function () {
                         var chatName = $(this).find('Name').text();
-                        var chatId = $(this).find('Id').text();
+                        var chatId = $(this).find('Id').last().text();
                         var numberOfPlayers = $(this).find('Players').find('Player').size();
-                        channels.append('<li data-theme="c" id="' + chatId + '"><a href="#chat" data-transition="slide">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
+                        channels.append('<li data-theme="c" id="' + chatId + '" data-transition="slide"><a href="#">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
                     });
                     channels.trigger("create");
+                    reBind();
                 }
             });
         }
     }
 
-    function checkUserName(newUserName) {
-        if (newUserName.val().trim() == '') {
+    function checkUserName(newUserName,checkIfIsEmpty) {
+        if (checkIfIsEmpty && newUserName.val().trim() == '') {
             showError("You MUST enter a username, faggot!");
             return '';
         }
