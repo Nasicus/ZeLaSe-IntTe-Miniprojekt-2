@@ -42,10 +42,11 @@ $(document).delegate("#lobby", "pagecreate", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "Connect",
-            dataType: "xml",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            success: function (xml) {
-                playerToken = $(xml).find("string").text();
+            success: function (response) {
+                playerToken = response = response.d;
             }
         });
     }
@@ -59,11 +60,12 @@ $(document).delegate("#lobby", "pagecreate", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "CreateChannel",
-            dataType: "xml",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            data: { playerToken: playerToken, channelName: newChannel.val() },
-            success: function (xml) {
-                newChannelName = $(xml).find("string").text();
+            data: '{ "playerToken": "'+playerToken+'", "channelName": "'+newChannel.val()+'" }',
+            success: function (response) {
+                newChannelName = response.d;
             }
         });
         if (newChannelName != '')
@@ -78,16 +80,19 @@ $(document).delegate("#lobby", "pagecreate", function () {
             $.ajax({
                 type: "POST",
                 url: serverUrl + "GetChats ",
-                dataType: "xml",
-                success: function (xml) {
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    response = response.d;
                     var channels = $('ul:jqmData(role="listview")');
                     channels.find("li:gt(0)").remove();
-                    $(xml).find("Chat").each(function () {
-                        var chatName = $(this).find('Name').text();
-                        var chatId = $(this).find('Id').last().text();
-                        var numberOfPlayers = $(this).find('Players').find('Player').size();
+                    for (var i = 0; i < response.length; i++) {
+                        var chatName = response[i].Name;
+                        var chatId = response[i].Id;
+                        var numberOfPlayers = response[i].Players.length;
                         channels.append('<li data-theme="c" id="' + chatId + '" data-transition="slide"><a href="#">' + chatName + ' (' + numberOfPlayers + ')</a></li>').listview("refresh");
-                    });
+                    }
+   
                     channels.trigger("create");
                     reBind();
                 }
@@ -104,11 +109,12 @@ $(document).delegate("#lobby", "pagecreate", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "IsNameUnique",
-            data: { name: newUserName.val() },
-            dataType: "xml",
+            data: '{ "name": "'+newUserName.val()+'" }',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            success: function (xml) {
-                isUnique = ("true" == $(xml).find("boolean").text());
+            success: function (response) {
+                isUnique = response.d;
             }
         });
         if (isUnique) {

@@ -21,10 +21,11 @@ $(document).delegate("#chat", "pageinit", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "LeaveChat",
-            data: {playerToken: playerToken},
-            dataType: "xml",
+            data: '{"playerToken": "'+playerToken+'"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            success: function (xml) { }
+            success: function (response) { }
         });
     }
 
@@ -35,11 +36,9 @@ $(document).delegate("#chat", "pageinit", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "WriteLine",
-            data: {
-                playerToken: playerToken,
-                text:message
-            },
-            dataType: "xml",
+            data: '{"playerToken": "'+playerToken+'","text" : "'+message+'"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
             success: function(xml) {
                 $("#chatMessageInput").val("");
@@ -54,20 +53,23 @@ $(document).delegate("#chat", "pageinit", function () {
     
     function startChatroomPolling() {
         if (shouldPollForNewMessages) {
-            setTimeout(startChatroomPolling, 10000);
+            setTimeout(startChatroomPolling, 1000);
             $.ajax({
                 type: "POST",
                 url: serverUrl + "GetChat",
-                data: { chatId: channel },
-                dataType: "xml",
+                data: '{ "chatId": "'+channel+'" }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
                 async: false,
-                success: function (xml) {
-                    $("#chatnamelabel").text($(xml).find("Name").text());
+                success: function (response) {
+                    response = response.d;
+                    $("#chatnamelabel").text(response.Name);
                     
-                    var newChatHistory ="";
-                    $($(xml).find("ChatLine").get().reverse()).each(function () {
-                        newChatHistory += $(this).find("Player").find("PlayerName").text() + " said : " + $(this).find("Text").text()+"\n";
-                    });
+                    var newChatHistory = "";
+                    for (var i = response.ChatLines.length-1; i >= 0; i--) {
+                        newChatHistory += response.ChatLines[i].Player.PlayerName + " said: " + response.ChatLines[i].Text + "\n";
+                    }
+                    
                     $("#chatmessages").val(newChatHistory);
                     $("#chatmessages").trigger("autosize");
                 }
@@ -79,12 +81,9 @@ $(document).delegate("#chat", "pageinit", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "JoinChat",
-            data: {
-                playerToken: playerToken,
-                chatId: channel,
-                userName: username
-            },
-            dataType: "xml",
+            data: '{"playerToken": "' + playerToken + '","chatId": "' + channel + '","userName": "' + username + '"}',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
             success: function (xml) {}
         });

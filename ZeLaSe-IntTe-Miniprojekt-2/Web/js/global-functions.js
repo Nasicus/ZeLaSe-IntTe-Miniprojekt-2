@@ -1,9 +1,9 @@
-//var serverUrl = 'http://sifsv-80018.hsr.ch/Service/ChatService.asmx/';
-var serverUrl = './Service/ChatService.asmx/';
-(function($) {
+var serverUrl = 'http://sifsv-80018.hsr.ch/Service/ChatService.asmx/';
+//var serverUrl = './Service/ChatService.asmx/';
+$(document).ready(function () {
     $.support.cors = true;
 
-})(jQuery);
+});
 
 //For persistent footer
 $('[data-role=page]').live('pageshow', function (event, ui) {
