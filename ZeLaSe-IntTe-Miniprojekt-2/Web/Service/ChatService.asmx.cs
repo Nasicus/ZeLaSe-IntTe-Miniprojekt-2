@@ -18,7 +18,8 @@ namespace JSTestat.Service
         private const string PersistChatName = "IntTe";
         private static readonly List<Chat> ChatLobby = new List<Chat>() { new Chat(PersistChatName) };
         private static readonly List<Player> AllPlayers = new List<Player>();
-        
+        private static readonly List<Player> RegisteredPlayers = new List<Player>() { new Player("testuser", "1234", Guid.NewGuid().ToString()) };
+
         [WebMethod(EnableSession = true, Description = "Connects to the server and returns a playerToken.")]
         [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -32,6 +33,37 @@ namespace JSTestat.Service
             return playerToken;
         }
 
+        [WebMethod(EnableSession = true, Description = "Logs in")]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public string Login(string playername, string password)
+        {
+            var player =
+                (from p in RegisteredPlayers where p.Password == password && p.PlayerName == playername select p).
+                    FirstOrDefault();
+            string playerToken = string.Empty;
+
+            if (player != null)
+            {
+                playerToken = HttpContext.Current.Session.SessionID;
+                player.PlayerToken = playerToken;
+                AllPlayers.Add(player);
+            }
+            return playerToken;
+        }
+
+        [WebMethod(EnableSession = true, Description = "Logs in")]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public bool IsLoggedIn()
+        {
+            var player =
+                (from p in AllPlayers where p.PlayerToken == HttpContext.Current.Session.SessionID select p).
+                    FirstOrDefault();
+
+            return player != null;
+        }
+
 
         [WebMethod(Description = "Player joins the given chat")]
         [ScriptMethod]
@@ -41,9 +73,9 @@ namespace JSTestat.Service
             PreCondition.AssertNotNullOrEmpty(playerToken, "playerToken");
             PreCondition.AssertNotNullOrEmpty(chatId, "chatId");
             PreCondition.AssertNotNullOrEmpty(userName, "userName");
-            
+
             SetName(playerToken, userName);
-            GetChat(chatId).AddPlayer( GetPlayer(playerToken));
+            GetChat(chatId).AddPlayer(GetPlayer(playerToken));
         }
 
 
@@ -84,7 +116,7 @@ namespace JSTestat.Service
             player.Tick = chat.ChatLines.Last().Tick;
             return list;
         }
-        
+
         [WebMethod(Description = "Checks if the given user name unqiue. ")]
         [ScriptMethod]
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -93,7 +125,7 @@ namespace JSTestat.Service
             var players = from x in ChatLobby
                           from y in x.Players
                           select y;
-            
+
             //players = players.Union(AllPlayers);  //check names only in the chats. Players not assigned to a room can have the same name.
             return players.FirstOrDefault(x => x.PlayerName == name) == null;
         }
@@ -136,12 +168,29 @@ namespace JSTestat.Service
             CheckPlayerToken(playerToken);
 
             var chat = ChatLobby.FirstOrDefault(x => x.Name == channelName); ;
-            if( chat == null)
+            if (chat == null)
             {
                 chat = new Chat(channelName);
-                ChatLobby.Add(chat);    
+                ChatLobby.Add(chat);
             }
             return chat.Id;
+        }
+
+        [WebMethod(Description = "Creates a new Player.")]
+        [ScriptMethod]
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public string CreatePlayer(string playerName, string password)
+        {
+            PreCondition.AssertNotNullOrEmpty(playerName, "playerName");
+            PreCondition.AssertNotNullOrEmpty(password, "password");
+
+            var player = RegisteredPlayers.FirstOrDefault(x => x.PlayerName == playerName);
+            if (player == null)
+            {
+                player = new Player(playerName, password, Guid.NewGuid().ToString());
+                RegisteredPlayers.Add(player);
+            }
+            return player.Id;
         }
 
 
@@ -153,14 +202,14 @@ namespace JSTestat.Service
         [MethodImpl(MethodImplOptions.Synchronized)]
         static internal void RemoveUserFromSessionId(string sessionId)
         {
-            foreach( var chat in ChatLobby)
+            foreach (var chat in ChatLobby)
             {
                 chat.Players.RemoveAll(x => x.Id == sessionId);
             }
 
             AllPlayers.RemoveAll(x => x.Id == sessionId);
 
-            if(ChatLobby.Count > 3)
+            if (ChatLobby.Count > 3)
             {
                 //delete all chats with no players where older than 3 minutes 
                 ChatLobby.RemoveAll(x => x.Players.Count == 0 && x.Name != PersistChatName && x.LastUse.AddMinutes(3) < DateTime.Now);

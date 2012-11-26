@@ -5,11 +5,40 @@ $(document).delegate("#lobby", "pagecreate", function () {
     
     $(document).delegate("#lobby", "pagebeforehide", pageBeforeHideFunction);
     $(document).delegate("#lobby", "pagebeforeshow", pageBeforeShowFunction);
+    
     $("#username").bind('keyup', function (e) {
         checkUserName($("#username"),false);
     });
     
+    $('#login').on("submit",
+    function (event) {
+    errorField.text("");
+    if (login($("#loginname").val(), $("#loginpassword").val()) == true) {
+        $('#loginDiv').hide();
+        return true;
+    } else {
+        showError("There is no User " + $("#loginname").val() + " registered");
+        return false;
+    }
+});
 
+    function login(username, password) {
+        var playerTk;
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "Login",
+            dataType: "xml",
+            async: false,
+            data: { playername: username, password: password },
+            success: function (xml) {
+                playerTk = $(xml).find("string").text();
+            }
+        });
+        if (playerTk == '') {
+            return false;
+        }
+        return true;
+    }
     $("#createChannel").bind("click", function () {
         var username = checkUserName($("#username"),true);
         if (username == '')
@@ -22,6 +51,10 @@ $(document).delegate("#lobby", "pagecreate", function () {
             return false;
         hideError();
         $.mobile.changePage("#chat?username=" + username + "&playerToken=" + playerToken + "&channel=" + newChannel, { transition: "slide" });
+    });
+    
+    $("#register").bind("click", function () {
+        $.mobile.changePage("#registerPage", { transition: "slide" });
     });
 
     function reBind() {
@@ -125,6 +158,20 @@ $(document).delegate("#lobby", "pagecreate", function () {
         return '';
     }
 
+    function isLoggedIn() {
+        var loggedIn = false;
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "IsLoggedIn",
+            dataType: "xml",
+            async: false,
+            success: function (xml) {
+                loggedIn = ("true" == $(xml).find("boolean").text());
+            }
+        });
+        return loggedIn;
+    }
+
     function showError(text) {
         errorField.text(text);
         errorField.css("display", "block");
@@ -139,6 +186,9 @@ $(document).delegate("#lobby", "pagecreate", function () {
     }
     
     function pageBeforeShowFunction() {
+        if(isLoggedIn()) {
+            $('#loginDiv').hide();
+        }
         shouldPollForNewChatRooms = true;
         loadChannels();
     }
