@@ -20,6 +20,7 @@
     });
 
     function createUser(username, password) {
+        alert(serverUrl);
         var playerId = '';
         $.ajax({
             type: "POST",

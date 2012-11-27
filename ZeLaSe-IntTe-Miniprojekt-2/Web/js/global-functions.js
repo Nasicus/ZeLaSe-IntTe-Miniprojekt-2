@@ -1,4 +1,4 @@
-var serverUrl = 'http://sifsv-80018.hsr.ch/Service/ChatService.asmx/';
+var serverUrl = 'http://localhost:64291/Service/ChatService.asmx/';
 //var serverUrl = './Service/ChatService.asmx/';
 $(document).ready(function () {
     $.support.cors = true;

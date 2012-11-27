@@ -45,25 +45,18 @@
                 <h3>...or ... </h3>
                 <a href="#" data-direction="forward" data-role="button" id="register" data-icon="plus" data-iconpos="right" data-transition="slide">register</a>
             </div>
+            <div id="channelSelection">
+                <p>
+                    <input type="text" placeholder="Enter a name for a new channel here..." class="input" id="newChannel" data-form="ui-body-a" />
+                    <a href="#" data-direction="forward" data-role="button" id="createChannel" data-icon="plus" data-iconpos="right" data-transition="slide">create & join channel</a>
+                </p>
+                <h3>...or join an existing channel from the list below...</h3>
+                <ul data-role="listview" data-divider-theme="a" id="availableChannels" data-inset="true">
+                    <li data-role="list-divider" role="heading">Channel Overview
+                    </li>
 
-            <h2>Enter your username...</h2>
-
-            <div data-role="fieldcontain" class="ui-hide-label">
-                <label for="username">...your ultracool username goes here...</label>
-                <input type="text" name="username" id="username" value="" placeholder="...your ultracool username goes here..." />
+                </ul>
             </div>
-
-            <h3>...and ... </h3>
-            <p>
-                <input type="text" placeholder="...enter a name for a new channel here..." class="input" id="newChannel" data-form="ui-body-a" />
-                <a href="#" data-direction="forward" data-role="button" id="createChannel" data-icon="plus" data-iconpos="right" data-transition="slide">create & join channel</a>
-            </p>
-            <h3>...or join an existing channel from the list below...</h3>
-            <ul data-role="listview" data-divider-theme="a" id="availableChannels" data-inset="true">
-                <li data-role="list-divider" role="heading">Channel Overview
-                </li>
-
-            </ul>
         </div>
         <!-- /content -->
         <div data-role="footer" data-theme="d"></div>

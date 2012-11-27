@@ -16,15 +16,18 @@ $(document).delegate("#lobby", "pagecreate", function () {
         errorField.text("");
         if (login($("#loginname").val(), $("#loginpassword").val()) == true) {
             $('#loginDiv').hide();
-            return true;
+            $('#channelSelection').show();
+            event.preventDefault();
+            event.stopPropagation();
         } else {
             showError("There is no User " + $("#loginname").val() + " registered");
-            return false;
+            event.preventDefault();
+            event.stopPropagation();
         }
     });
 
     $("#createChannel").bind("click", function () {
-        if (isLoggedIn()) {
+        if (isLoggedIn() == true) {
             var newChannel = createChannel($("#newChannel"));
             if (newChannel == '')
                 return;
@@ -61,10 +64,7 @@ $(document).delegate("#lobby", "pagecreate", function () {
 
     function reBind() {
         $('#availableChannels li').bind("click", function () {
-            if (isLoggedIn()) {
-                var newChannel = createChannel($("#newChannel"));
-                if (newChannel == '')
-                    return;
+            if (isLoggedIn() == true) {
                 hideError();
                 $.mobile.changePage("#chat?username=" + username + "&playerToken=" + playerToken + "&channel=" + $(this).attr("id"), { transition: "slide" });
             } else {
@@ -152,6 +152,8 @@ $(document).delegate("#lobby", "pagecreate", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "IsLoggedIn",
+            data: '{ }',
+            contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: false,
             success: function (response) {
@@ -175,8 +177,11 @@ $(document).delegate("#lobby", "pagecreate", function () {
     }
 
     function pageBeforeShowFunction() {
-        if (isLoggedIn()) {
+        if (isLoggedIn() == true) {
             $('#loginDiv').hide();
+            $('#channelSelection').show();
+        } else {
+            $('#channelSelection').hide();
         }
         shouldPollForNewChatRooms = true;
         loadChannels();
