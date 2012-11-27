@@ -8,30 +8,33 @@
         errorField.text("");
         if (checkUserName($("#requestedUsername")) == false || checkPassword($("#password"), $("#password_v")) == false) {
             showError();
-            return false;
+            event.preventDefault();
+            event.stopPropagation();
         } else {
             hideError();
             createUser($("#requestedUsername").val(), $("#password").val());
+            event.preventDefault();
+            event.stopPropagation();
             $("#leaveRegistration").click();
-            return false;
         }
     });
-    
+
     function createUser(username, password) {
         var playerId = '';
         $.ajax({
             type: "POST",
             url: serverUrl + "CreatePlayer",
-            dataType: "xml",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            data: { playerName: username, password: password },
-            success: function (xml) {
-                playerId = $(xml).find("string").text();
+            data: '{ "playername": "' + username + '", "password": "' + password + '" }',
+            success: function (response) {
+                playerId = response.d;
             }
         });
         return playerId;
     }
-    
+
     function checkUserName(newUserName) {
         if (newUserName.val().trim() == '') {
             addError("You MUST enter a username, faggot!");
@@ -41,11 +44,12 @@
         $.ajax({
             type: "POST",
             url: serverUrl + "IsNameUnique",
-            data: { name: newUserName.val() },
-            dataType: "xml",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            success: function (xml) {
-                isUnique = ("true" == $(xml).find("boolean").text());
+            data: '{ "name": "' + newUserName.val() + '" }',
+            success: function (response) {
+                isUnique = response.d;
             }
         });
         if (isUnique) {
@@ -55,7 +59,7 @@
         addError("Your username is already taken idiot");
         return false;
     }
-    
+
     function checkPassword(password, password_v) {
         if (password.val().trim() == '') {
             addError("You must enter a Password");

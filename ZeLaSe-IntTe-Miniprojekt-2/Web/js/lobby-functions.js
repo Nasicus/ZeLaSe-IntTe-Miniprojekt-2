@@ -6,9 +6,9 @@ $(document).delegate("#lobby", "pagecreate", function () {
     var playerToken = "";
     var username = "";
     var shouldPollForNewChatRooms = true;
-    
+
     $("#username").bind('keyup', function (e) {
-        //checkUserName($("#username"), false);
+        checkUserName($("#username"), false);
     });
 
     $('#login').on("submit",
@@ -22,7 +22,7 @@ $(document).delegate("#lobby", "pagecreate", function () {
             return false;
         }
     });
-    
+
     $("#createChannel").bind("click", function () {
         if (isLoggedIn()) {
             var newChannel = createChannel($("#newChannel"));
@@ -43,11 +43,12 @@ $(document).delegate("#lobby", "pagecreate", function () {
         $.ajax({
             type: "POST",
             url: serverUrl + "Login",
-            dataType: "xml",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
             async: false,
-            data: { playername: loginname, password: password },
-            success: function (xml) {
-                playerToken = $(xml).find("string").text();
+            data: '{ "playername": "' + loginname + '", "password": "' + password + '" }',
+            success: function (response) {
+                playerToken = response.d;
                 username = loginname;
             }
         });
@@ -121,40 +122,40 @@ $(document).delegate("#lobby", "pagecreate", function () {
         }
     }
 
-    //function checkUserName(newUserName, checkIfIsEmpty) {
-    //    if (checkIfIsEmpty && newUserName.val().trim() == '') {
-    //        showError("You MUST enter a username, faggot!");
-    //        return '';
-    //    }
-    //    var isUnique = false;
-    //    $.ajax({
-    //        type: "POST",
-    //        url: serverUrl + "IsNameUnique",
-    //        data: '{ "name": "' + newUserName.val() + '" }',
-    //        contentType: "application/json; charset=utf-8",
-    //        dataType: "json",
-    //        async: false,
-    //        success: function (response) {
-    //            isUnique = response.d;
-    //        }
-    //    });
-    //    if (isUnique) {
-    //        hideError();
-    //        return newUserName.val();
-    //    }
-    //    showError("Your username is already taken idiot");
-    //    return '';
-    //}
+    function checkUserName(newUserName, checkIfIsEmpty) {
+        if (checkIfIsEmpty && newUserName.val().trim() == '') {
+            showError("You MUST enter a username, faggot!");
+            return '';
+        }
+        var isUnique = false;
+        $.ajax({
+            type: "POST",
+            url: serverUrl + "IsNameUnique",
+            data: '{ "name": "' + newUserName.val() + '" }',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (response) {
+                isUnique = response.d;
+            }
+        });
+        if (isUnique) {
+            hideError();
+            return newUserName.val();
+        }
+        showError("Your username is already taken idiot");
+        return '';
+    }
 
     function isLoggedIn() {
         var loggedIn = false;
         $.ajax({
             type: "POST",
             url: serverUrl + "IsLoggedIn",
-            dataType: "xml",
+            dataType: "json",
             async: false,
-            success: function (xml) {
-                loggedIn = ("true" == $(xml).find("boolean").text());
+            success: function (response) {
+                loggedIn = response.d;
             }
         });
         return loggedIn;
