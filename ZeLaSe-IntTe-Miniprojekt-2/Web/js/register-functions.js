@@ -11,12 +11,12 @@
         if (checkUserName($("#requestedUsername")) == false || checkPassword($("#password"), $("#password_v")) == false) {
             showError();
 
-        } else if(createUser($("#requestedUsername").val(), $("#password").val())) {
-            hideError();            
+        } else if (createUser($("#requestedUsername").val(), $("#password").val())) {
+            hideError();
             $("#leaveRegistration").click();
         }
         else {
-            showError("Internal Server Error");          
+            showError("Internal Server Error");
         }
     });
 
