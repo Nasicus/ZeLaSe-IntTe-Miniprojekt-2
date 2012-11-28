@@ -3,6 +3,12 @@ var serverUrl = 'http://localhost:64291/Service/ChatService.asmx/';
 $(document).ready(function () {
     $.support.cors = true;
 
+    $(".logoutForm").bind("click", function () {
+        if (isLoggedIn()) {
+            $.mobile.changePage("#chat");
+            showVisibleContent();
+        }
+    });
 });
 
 //For persistent footer
@@ -18,3 +24,30 @@ $(document).bind("pagebeforechange", function (event, data) {
         ? data.options.pageData
         : null;
 });
+
+function isLoggedIn() {
+    var loggedIn = false;
+    $.ajax({
+        type: "POST",
+        url: serverUrl + "IsLoggedIn",
+        data: '{ }',
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            loggedIn = response.d;
+        }
+    });
+    return loggedIn;
+}
+
+function showVisibleContent() {
+    if(isLoggedIn()) {
+        $(".loginForm").hide();
+        $(".logoutForm").show();
+    }
+    else {
+        $(".loginForm").show();
+        $(".logoutForm").hide();
+    }
+}

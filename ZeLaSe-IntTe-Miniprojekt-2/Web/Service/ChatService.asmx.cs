@@ -179,15 +179,15 @@ namespace JSTestat.Service
         [WebMethod(Description = "Creates a new Player.")]
         [ScriptMethod]
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public string CreatePlayer(string playerName, string password)
+        public string CreatePlayer(string playername, string password)
         {
-            PreCondition.AssertNotNullOrEmpty(playerName, "playerName");
+            PreCondition.AssertNotNullOrEmpty(playername, "playername");
             PreCondition.AssertNotNullOrEmpty(password, "password");
 
-            var player = RegisteredPlayers.FirstOrDefault(x => x.PlayerName == playerName);
+            var player = RegisteredPlayers.FirstOrDefault(x => x.PlayerName == playername);
             if (player == null)
             {
-                player = new Player(playerName, password, Guid.NewGuid().ToString());
+                player = new Player(playername, password, Guid.NewGuid().ToString());
                 RegisteredPlayers.Add(player);
             }
             return player.Id;
@@ -215,6 +215,37 @@ namespace JSTestat.Service
                 ChatLobby.RemoveAll(x => x.Players.Count == 0 && x.Name != PersistChatName && x.LastUse.AddMinutes(3) < DateTime.Now);
             }
 
+        }
+
+        /// <summary>
+        /// This method removes all player assigned to the given session id. 
+        /// Also it removes not used chat rooms
+        /// </summary>
+        /// <param name="sessionId"></param>
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        static internal void Logout(string sessionId)
+        {
+            foreach (var chat in ChatLobby)
+            {
+                chat.Players.RemoveAll(x => x.PlayerToken == sessionId);
+            }
+
+            AllPlayers.RemoveAll(x => x.PlayerToken == sessionId);
+
+            if (ChatLobby.Count > 3)
+            {
+                //delete all chats with no players where older than 3 minutes 
+                ChatLobby.RemoveAll(x => x.Players.Count == 0 && x.Name != PersistChatName && x.LastUse.AddMinutes(3) < DateTime.Now);
+            }
+
+        }
+
+        [WebMethod(EnableSession = true, Description = "Connects to the server and returns a playerToken.")]
+        [ScriptMethod(ResponseFormat = ResponseFormat.Json)]
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void Logout()
+        {
+            Logout(HttpContext.Current.Session.SessionID);
         }
 
         #region helper methods

@@ -7,23 +7,17 @@ $(document).delegate("#lobby", "pagecreate", function () {
     var username = "";
     var shouldPollForNewChatRooms = true;
 
-    $("#username").bind('keyup', function (e) {
-        checkUserName($("#username"), false);
-    });
-
     $('#login').on("submit",
     function (event) {
+        event.preventDefault();
+        event.stopPropagation();
         errorField.text("");
         if (login($("#loginname").val(), $("#loginpassword").val()) == true) {
-            $('#loginDiv').hide();
-            $('#channelSelection').show();
-            event.preventDefault();
-            event.stopPropagation();
+            hideError();
         } else {
-            showError("There is no User " + $("#loginname").val() + " registered");
-            event.preventDefault();
-            event.stopPropagation();
+            showError("Either Username or Password is wrong");
         }
+        showVisibleContent();
     });
 
     $("#createChannel").bind("click", function () {
@@ -147,21 +141,7 @@ $(document).delegate("#lobby", "pagecreate", function () {
         return '';
     }
 
-    function isLoggedIn() {
-        var loggedIn = false;
-        $.ajax({
-            type: "POST",
-            url: serverUrl + "IsLoggedIn",
-            data: '{ }',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: false,
-            success: function (response) {
-                loggedIn = response.d;
-            }
-        });
-        return loggedIn;
-    }
+
 
     function showError(text) {
         errorField.text(text);

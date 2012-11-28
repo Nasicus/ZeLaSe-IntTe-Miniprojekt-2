@@ -12,3 +12,14 @@
     -webkit-box-shadow: 10px 10px 5px #888;
     box-shadow: 10px 10px 5px #888;
 }
+.loginForm {
+    width: 180px;
+    float: right
+}
+.logoutForm {
+    width: 180px;
+    float: right
+}
+.content {
+    margin-right: 190px;
+}
