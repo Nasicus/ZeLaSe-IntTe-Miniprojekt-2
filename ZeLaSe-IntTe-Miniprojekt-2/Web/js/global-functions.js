@@ -6,6 +6,16 @@ $(document).ready(function () {
     $(".logoutForm").bind("click", function () {
         if (isLoggedIn()) {
             $.mobile.changePage("#chat");
+            $.ajax({
+                type: "POST",
+                url: serverUrl + "Logout",
+                data: '{ }',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (response) {
+                }
+            });
             showVisibleContent();
         }
     });

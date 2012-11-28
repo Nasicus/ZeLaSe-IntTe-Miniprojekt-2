@@ -116,33 +116,6 @@ $(document).delegate("#lobby", "pagecreate", function () {
         }
     }
 
-    function checkUserName(newUserName, checkIfIsEmpty) {
-        if (checkIfIsEmpty && newUserName.val().trim() == '') {
-            showError("You MUST enter a username, faggot!");
-            return '';
-        }
-        var isUnique = false;
-        $.ajax({
-            type: "POST",
-            url: serverUrl + "IsNameUnique",
-            data: '{ "name": "' + newUserName.val() + '" }',
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            async: false,
-            success: function (response) {
-                isUnique = response.d;
-            }
-        });
-        if (isUnique) {
-            hideError();
-            return newUserName.val();
-        }
-        showError("Your username is already taken idiot");
-        return '';
-    }
-
-
-
     function showError(text) {
         errorField.text(text);
         errorField.css("display", "block");
