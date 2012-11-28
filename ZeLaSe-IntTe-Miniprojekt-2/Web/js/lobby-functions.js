@@ -130,12 +130,7 @@ $(document).delegate("#lobby", "pagecreate", function () {
     }
 
     function pageBeforeShowFunction() {
-        if (isLoggedIn() == true) {
-            $('#loginDiv').hide();
-            $('#channelSelection').show();
-        } else {
-            $('#channelSelection').hide();
-        }
+        showVisibleContent();
         shouldPollForNewChatRooms = true;
         loadChannels();
     }

@@ -4,20 +4,25 @@
     width: 99%;
     padding: 10px;
     color: white;
-    border-radius: 10px; 
-    -moz-border-radius: 10px; 
-    -webkit-border-radius: 10px; 
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
     border: 1px solid #800000;
     -moz-box-shadow: 10px 10px 5px #888;
     -webkit-box-shadow: 10px 10px 5px #888;
     box-shadow: 10px 10px 5px #888;
 }
+
 .loginForm {
+    width: 180px;
+    float: right;
 }
+
 .logoutForm {
     width: 180px;
-    float: right
+    float: right;
 }
+
 .content {
     margin-right: 190px;
 }
