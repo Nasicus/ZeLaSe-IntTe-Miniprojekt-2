@@ -5,22 +5,22 @@
 
     $('#registerForm').on("submit",
     function (event) {
+        event.preventDefault();
+        event.stopPropagation();
         errorField.text("");
         if (checkUserName($("#requestedUsername")) == false || checkPassword($("#password"), $("#password_v")) == false) {
             showError();
-            event.preventDefault();
-            event.stopPropagation();
-        } else {
-            hideError();
-            createUser($("#requestedUsername").val(), $("#password").val());
-            event.preventDefault();
-            event.stopPropagation();
+
+        } else if(createUser($("#requestedUsername").val(), $("#password").val())) {
+            hideError();            
             $("#leaveRegistration").click();
+        }
+        else {
+            showError("Internal Server Error");          
         }
     });
 
     function createUser(username, password) {
-        alert(serverUrl);
         var playerId = '';
         $.ajax({
             type: "POST",

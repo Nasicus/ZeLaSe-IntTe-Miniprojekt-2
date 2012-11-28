@@ -5,7 +5,6 @@ $(document).ready(function () {
 
     $(".logoutForm").bind("click", function () {
         if (isLoggedIn()) {
-            $.mobile.changePage("#chat");
             $.ajax({
                 type: "POST",
                 url: serverUrl + "Logout",
@@ -17,6 +16,7 @@ $(document).ready(function () {
                 }
             });
             showVisibleContent();
+            $.mobile.changePage("#lobby");
         }
     });
 });
