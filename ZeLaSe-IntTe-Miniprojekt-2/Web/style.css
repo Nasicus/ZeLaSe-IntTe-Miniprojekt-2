@@ -14,15 +14,35 @@
 }
 
 .loginForm {
-    width: 180px;
+    width: 30%;
     float: right;
 }
 
 .logoutForm {
-    width: 180px;
+    width: 30%;
     float: right;
 }
 
 .content {
-    margin-right: 190px;
+    margin-right: 3%;
+    width: 67%;
+}
+
+@media screen and (max-width: 480px) {
+
+    .loginForm {
+        width: 95%;
+        margin: 2%;
+    }
+
+    .logoutForm {
+        width: 95%;
+        margin: 2%;
+        margin-bottom: 5%;
+    }
+
+    .content {
+        margin: 2%;
+        width: 95%;
+    }
 }
